@@ -1,0 +1,17 @@
+Server:
+  ContextPath: /
+  Port: 8080
+  ReadTimeoutSec: 10
+  WriteTimeoutSec: 10
+  GracefulShutdownTimeoutSec: 10
+Grpc:
+  Port: 3000  
+  GracefulShutdownTimeoutSec: 10
+Logging:
+  Level: debug
+Database:
+  DriverName: mysql
+  URL: root:callicoder@/test?charset=utf8&parseTime=True&loc=Local   
+Auth:
+  JwtSecret: secret
+  JwtExpiryInSec: 2592000
