@@ -13,6 +13,7 @@ type Config struct {
 	Database DatabaseConfig
 	Auth     AuthConfig
 	Grpc     GrpcConfig
+	Migration MigrationConfig
 }
 
 type ServerConfig struct {
@@ -36,6 +37,10 @@ type LoggingConfig struct {
 type DatabaseConfig struct {
 	DriverName string
 	URL        string
+}
+
+type MigrationConfig struct {
+	Path string
 }
 
 type AuthConfig struct {

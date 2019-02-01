@@ -9,6 +9,7 @@ require (
 	github.com/go-ini/ini v1.40.0 // indirect
 	github.com/go-redis/redis v6.14.2+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
+	github.com/golang-migrate/migrate v3.5.4+incompatible
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gorilla/context v1.1.1 // indirect
 	github.com/gorilla/handlers v1.4.0

@@ -7,6 +7,7 @@ import (
 
 	"github.com/callicoder/go-ready/internal/service"
 	"github.com/callicoder/go-ready/pkg/contracts"
+	"github.com/callicoder/go-ready/pkg/logger"
 	"github.com/gorilla/mux"
 	"google.golang.org/api/oauth2/v2"
 )
@@ -40,6 +41,6 @@ func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Req
 	if err != nil {
 
 	}
-	
-	return tokenInfo, nil
+
+	logger.Info(tokenInfo)
 }

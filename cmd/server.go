@@ -20,14 +20,14 @@ func newServerCommand() *cobra.Command {
 }
 
 func serverCmdF(command *cobra.Command, args []string) error {
-	config, err := command.Flags().GetString("config")
+	configFileLocation, err := command.Flags().GetString("config")
 
 	if err != nil {
 		return err
 	}
 
 	interruptChan := make(chan os.Signal, 1)
-	return runServer(config, interruptChan)
+	return runServer(configFileLocation, interruptChan)
 }
 
 func runServer(configFileLocation string, interruptChan chan os.Signal) error {
