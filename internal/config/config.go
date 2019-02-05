@@ -8,11 +8,11 @@ import (
 )
 
 type Config struct {
-	Server   ServerConfig
-	Logging  LoggingConfig
-	Database DatabaseConfig
-	Auth     AuthConfig
-	Grpc     GrpcConfig
+	Server    ServerConfig
+	Logging   LoggingConfig
+	Database  DatabaseConfig
+	Auth      AuthConfig
+	Grpc      GrpcConfig
 	Migration MigrationConfig
 }
 

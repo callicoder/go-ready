@@ -12,6 +12,7 @@ func NewCLI() *cobra.Command {
 	}
 
 	cli.AddCommand(newServerCommand())
+	cli.AddCommand(newMigrateCommand())
 
 	cli.PersistentFlags().StringP("config", "c", "config/application.yml", "Configuration file to use (default is `config/application.yml`).")
 	return cli

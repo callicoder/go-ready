@@ -1,13 +1,11 @@
 package cmd
 
 import (
-	"database/sql"
-	"errors"
-	"strings"
-
 	"github.com/callicoder/go-ready/internal/config"
-	"github.com/golang-migrate/migrate"
-	"github.com/golang-migrate/migrate/database/postgres"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/mysql"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/spf13/cobra"
 )
 
@@ -39,6 +37,7 @@ func migrateCmdF(command *cobra.Command, args []string) error {
 	}
 
 	config, err := config.Load(configFileLocation)
+
 	if err != nil {
 		return err
 	}
@@ -62,7 +61,7 @@ func rollbackCmdF(command *cobra.Command, args []string) error {
 }
 
 func runMigrations(config *config.Config) error {
-	m, err := createMigrate(config)
+	m, err := newMigrate(config)
 	if err != nil {
 		return err
 	}
@@ -78,7 +77,7 @@ func runMigrations(config *config.Config) error {
 }
 
 func rollbackMigration(config *config.Config) error {
-	m, err := createMigrate(config)
+	m, err := newMigrate(config)
 	if err != nil {
 		return err
 	}
@@ -93,25 +92,6 @@ func rollbackMigration(config *config.Config) error {
 	return nil
 }
 
-func createMigrate(config *config.Config) (*migrate.Migrate, error) {
-	if !strings.EqualFold(config.Database.DriverName, "postgres") {
-		return nil, errors.New("Migratioin is supported only for postgres.")
-	}
-
-	db, err := sql.Open(config.Database.DriverName, config.Database.URL)
-	if err != nil {
-		return nil, err
-	}
-
-	driver, err := postgres.WithInstance(db, &postgres.Config{})
-	if err != nil {
-		return nil, err
-	}
-
-	m, err := migrate.NewWithDatabaseInstance(config.Migration.Path, "postgres", driver)
-	if err != nil {
-		return nil, err
-	}
-
-	return m, nil
+func newMigrate(config *config.Config) (*migrate.Migrate, error) {
+	return migrate.New(config.Migration.Path, config.Database.URL)
 }
