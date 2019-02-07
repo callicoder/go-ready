@@ -8,10 +8,10 @@ import (
 )
 
 type UserHandler struct {
-	userService *service.UserService
+	userService service.UserService
 }
 
-func InitUserHandler(router *mux.Router, userService *service.UserService) {
+func InitUserHandler(router *mux.Router, userService service.UserService) {
 	userHandler := &UserHandler{
 		userService: userService,
 	}

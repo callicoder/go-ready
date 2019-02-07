@@ -9,7 +9,7 @@ import (
 	"github.com/callicoder/go-ready/pkg/logger"
 )
 
-func AuthHandler(next http.Handler, tokenService *service.TokenService) http.Handler {
+func AuthHandler(next http.Handler, tokenService service.TokenService) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		token := getAuthTokenFromRequest(r)
 		if token != "" {

@@ -23,6 +23,7 @@ func NewRouter(config *config.Config, deps *Dependencies) http.Handler {
 	// Attach API Handlers
 	handlers.InitUserHandler(router, deps.UserService)
 	handlers.InitGroupHandler(router, deps.GroupService)
+	handlers.InitAuthHandler(router, deps.UserService, config.Auth)
 
 	// Prepare the Http handler
 	var handler http.Handler = router
@@ -45,9 +46,6 @@ func NewRouter(config *config.Config, deps *Dependencies) http.Handler {
 
 	// Error Recovery
 	handler = gHandlers.RecoveryHandler(gHandlers.PrintRecoveryStack(true))(handler)
-
-	// Compression
-	handler = gHandlers.CompressHandler(handler)
 
 	return handler
 }

@@ -1,8 +1,11 @@
 package service
 
-type ChatService struct {
+type ChatService interface {
 }
 
-func NewChatService() *ChatService {
-	return &ChatService{}
+type chatService struct {
+}
+
+func NewChatService() ChatService {
+	return &chatService{}
 }

@@ -8,10 +8,10 @@ import (
 )
 
 type GroupHandler struct {
-	groupService *service.GroupService
+	groupService service.GroupService
 }
 
-func InitGroupHandler(router *mux.Router, groupService *service.GroupService) {
+func InitGroupHandler(router *mux.Router, groupService service.GroupService) {
 	groupHandler := &GroupHandler{
 		groupService: groupService,
 	}

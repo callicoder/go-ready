@@ -6,10 +6,11 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/disintegration/imaging v1.5.0 // indirect
 	github.com/dyatlov/go-opengraph v0.0.0-20180429202543-816b6608b3c8 // indirect
+	github.com/futurenda/google-auth-id-token-verifier v0.0.0-20170311140316-2a5b89f28b7e
 	github.com/go-ini/ini v1.40.0 // indirect
 	github.com/go-redis/redis v6.14.2+incompatible // indirect
 	github.com/go-sql-driver/mysql v1.4.1
-	github.com/golang-migrate/migrate v3.5.4+incompatible
+	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
 	github.com/golang-migrate/migrate/v4 v4.2.3
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/gorilla/handlers v1.4.0
@@ -30,6 +31,7 @@ require (
 	github.com/mitchellh/go-homedir v1.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.1 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
+	github.com/pkg/errors v0.8.1
 	github.com/rs/cors v1.6.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20180518182100-8d986c03457a // indirect
 	github.com/satori/go.uuid v1.2.0
@@ -45,7 +47,7 @@ require (
 	go.uber.org/multierr v1.1.0 // indirect
 	go.uber.org/zap v1.9.1 // indirect
 	golang.org/x/image v0.0.0-20181116024801-cd38e8056d9b // indirect
-	google.golang.org/api v0.1.0
+	google.golang.org/api v0.1.0 // indirect
 	google.golang.org/grpc v1.17.0
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df // indirect

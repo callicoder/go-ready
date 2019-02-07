@@ -10,17 +10,23 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 )
 
-type TokenService struct {
+type TokenService interface {
+	CreateToken(user *model.User) (string, error)
+	ParseToken(tokenStr string) (*jwt.Token, error)
+	GetUserSessionFromToken(tokenStr string) (*model.Session, error)
+}
+
+type tokenService struct {
 	config config.AuthConfig
 }
 
-func NewTokenService(config config.AuthConfig) *TokenService {
-	return &TokenService{
+func NewTokenService(config config.AuthConfig) TokenService {
+	return &tokenService{
 		config: config,
 	}
 }
 
-func (s *TokenService) CreateToken(user *model.User) (string, error) {
+func (s *tokenService) CreateToken(user *model.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.StandardClaims{
 		Subject:   string(user.Id),
 		IssuedAt:  time.Now().Unix(),
@@ -36,7 +42,7 @@ func (s *TokenService) CreateToken(user *model.User) (string, error) {
 	return tokenStr, err
 }
 
-func (s *TokenService) ParseToken(tokenStr string) (*jwt.Token, error) {
+func (s *tokenService) ParseToken(tokenStr string) (*jwt.Token, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -48,7 +54,7 @@ func (s *TokenService) ParseToken(tokenStr string) (*jwt.Token, error) {
 	return token, err
 }
 
-func (s *TokenService) GetUserSessionFromToken(tokenStr string) (*model.Session, error) {
+func (s *tokenService) GetUserSessionFromToken(tokenStr string) (*model.Session, error) {
 	token, err := s.ParseToken(tokenStr)
 	if err != nil {
 		return nil, err

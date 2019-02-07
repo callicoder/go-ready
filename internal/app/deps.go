@@ -10,9 +10,9 @@ import (
 type Dependencies struct {
 	Repository     repository.Repository
 	UserRepository repository.UserRepository
-	UserService    *service.UserService
-	GroupService   *service.GroupService
-	TokenService   *service.TokenService
+	UserService    service.UserService
+	GroupService   service.GroupService
+	TokenService   service.TokenService
 }
 
 func NewDependencies(config *config.Config) (*Dependencies, error) {

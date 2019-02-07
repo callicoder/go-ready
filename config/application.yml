@@ -17,3 +17,4 @@ Migration:
 Auth:
   JwtSecret: secret
   JwtExpiryInSec: 2592000
+  GoogleClientId: 351329348566-7ugi3mja9tbghse8ub1cfmuhupeb8h70.apps.googleusercontent.com

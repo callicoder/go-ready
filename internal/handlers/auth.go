@@ -3,22 +3,24 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	"time"
 
+	"github.com/callicoder/go-ready/internal/config"
+	"github.com/callicoder/go-ready/internal/model"
 	"github.com/callicoder/go-ready/internal/service"
 	"github.com/callicoder/go-ready/pkg/contracts"
-	"github.com/callicoder/go-ready/pkg/logger"
+	googleAuthIDTokenVerifier "github.com/futurenda/google-auth-id-token-verifier"
 	"github.com/gorilla/mux"
-	"google.golang.org/api/oauth2/v2"
 )
 
 type AuthHandler struct {
-	userService *service.UserService
+	userService service.UserService
+	config      config.AuthConfig
 }
 
-func InitAuthHandler(router *mux.Router, userService *service.UserService) {
+func InitAuthHandler(router *mux.Router, userService service.UserService, config config.AuthConfig) {
 	authHandler := &AuthHandler{
 		userService: userService,
+		config:      config,
 	}
 
 	router.Handle("/auth/tokensignin", ApiHandler(authHandler.tokenSignin)).Methods("POST")
@@ -27,20 +29,27 @@ func InitAuthHandler(router *mux.Router, userService *service.UserService) {
 func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Request) {
 	var tokenSigninRequest contracts.TokenSigninRequest
 	if err := json.NewDecoder(r.Body).Decode(&tokenSigninRequest); err != nil {
-
+		return
 	}
 
-	httpClient := &http.Client{
-		Timeout: 3 * time.Second,
-	}
-
-	oauth2Service, err := oauth2.New(httpClient)
-	tokenInfoCall := oauth2Service.Tokeninfo()
-	tokenInfoCall.IdToken(tokenSigninRequest.IdToken)
-	tokenInfo, err := tokenInfoCall.Do()
+	verifier := googleAuthIDTokenVerifier.Verifier{}
+	err := verifier.VerifyIDToken(tokenSigninRequest.IdToken, []string{
+		h.config.GoogleClientId,
+	})
 	if err != nil {
-
+		return
+	}
+	claimSet, err := googleAuthIDTokenVerifier.Decode(tokenSigninRequest.IdToken)
+	if err != nil {
+		return
 	}
 
-	logger.Info(tokenInfo)
+	user := &model.User{
+		Name:     claimSet.Name,
+		Email:    claimSet.Email,
+		ImageUrl: claimSet.Picture,
+	}
+
+	h.userService.Create(user)
+	return
 }

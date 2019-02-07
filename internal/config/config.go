@@ -14,6 +14,7 @@ type Config struct {
 	Auth      AuthConfig
 	Grpc      GrpcConfig
 	Migration MigrationConfig
+	Http      HttpConfig
 }
 
 type ServerConfig struct {
@@ -46,6 +47,13 @@ type MigrationConfig struct {
 type AuthConfig struct {
 	JwtSecret      string
 	JwtExpiryInSec int
+	GoogleClientId string
+}
+
+type HttpConfig struct {
+	ConnectTimeoutSec int
+	RequestTimeoutSec int
+	UserAgent         string
 }
 
 func Load(configFile string) (*Config, error) {
