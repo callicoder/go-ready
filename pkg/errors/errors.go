@@ -3,28 +3,28 @@ package errors
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
+	pkgerrors "github.com/pkg/errors"
 )
 
 // New returns a error with supplied message
 func New(msg string) error {
-	return errors.New(msg)
+	return pkgerrors.New(msg)
 }
 
 // Wrap returns new error by annotating the passed error with message
 func Wrap(err error, msg string) error {
-	return errors.Wrap(err, msg)
+	return pkgerrors.Wrap(err, msg)
 }
 
 // Wrapf returns a new error by annotating passed error with formated message
 func Wrapf(err error, msg string, args ...interface{}) error {
-	return errors.Wrapf(err, msg, args...)
+	return pkgerrors.Wrapf(err, msg, args...)
 }
 
 // Cause returns the underlying cause of the error by unwrapping the error
 // StackTrace.
 func Cause(err error) error {
-	return errors.Cause(err)
+	return pkgerrors.Cause(err)
 }
 
 // BaseError holds code and description of an error

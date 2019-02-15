@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/callicoder/go-ready/internal/context"
 )
 
 type Handler struct {
@@ -13,13 +11,7 @@ type Handler struct {
 }
 
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c := &Context{
-		RequestID: context.RequestID(r.Context()),
-		IPAddress: context.IPAddress(r.Context()),
-		Session:   context.Session(r.Context()),
-		Path:      r.URL.Path,
-		UserAgent: r.UserAgent(),
-	}
+	c := NewContext(w, r)
 
 	if h.IsStatic {
 		// Instruct the browser not to display us in an iframe unless is the same origin for anti-clickjacking
