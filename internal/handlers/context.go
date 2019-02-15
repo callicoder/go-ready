@@ -6,10 +6,11 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/callicoder/go-ready/internal/context"
+	reqcontext "github.com/callicoder/go-ready/internal/context"
 	"github.com/callicoder/go-ready/internal/model"
 	"github.com/callicoder/go-ready/pkg/errors"
 	"github.com/callicoder/go-ready/pkg/logger"
+	"github.com/gorilla/mux"
 )
 
 const (
@@ -17,22 +18,27 @@ const (
 	contentTypeJSON   = "application/json"
 )
 
-type Context struct {
-	Request        *http.Request
-	ResponseWriter http.ResponseWriter
-	RequestID      string
-	IPAddress      net.IP
-	Session        *model.Session
+type Context interface {
+	Request() *http.Request
+	ResponseWriter() http.ResponseWriter
+	Path() string
+	Param(name string) string
+	QueryParam(name string) string
+	BindJSON(i interface{}) error
+	JSON(statusCode int, body interface{})
+	Error(err error)
+	Session() *model.Session
+	RequestID() string
+	IPAddress() net.IP
 }
 
-func NewContext(w http.ResponseWriter, r *http.Request) *Context {
-	return &Context{
-		Request:        r,
-		ResponseWriter: w,
-		RequestID:      context.RequestID(r.Context()),
-		IPAddress:      context.IPAddress(r.Context()),
-		Session:        context.Session(r.Context()),
-	}
+type context struct {
+	request        *http.Request
+	responseWriter http.ResponseWriter
+	pathVars       map[string]string
+	requestID      string
+	ipAddress      net.IP
+	session        *model.Session
 }
 
 type httpError struct {
@@ -40,7 +46,51 @@ type httpError struct {
 	StatusCode int
 }
 
-func (c *Context) Error(err error) {
+func NewContext(w http.ResponseWriter, r *http.Request) Context {
+	return &context{
+		request:        r,
+		responseWriter: w,
+		requestID:      reqcontext.RequestID(r.Context()),
+		ipAddress:      reqcontext.IPAddress(r.Context()),
+		session:        reqcontext.Session(r.Context()),
+		pathVars:       mux.Vars(r),
+	}
+}
+
+func (c *context) Request() *http.Request {
+	return c.request
+}
+
+func (c *context) ResponseWriter() http.ResponseWriter {
+	return c.responseWriter
+}
+
+func (c *context) Path() string {
+	return c.request.URL.Path
+}
+
+func (c *context) Param(name string) string {
+	return c.pathVars[name]
+}
+
+func (c *context) QueryParam(name string) string {
+	query := c.request.URL.Query()
+	return query.Get(name)
+}
+
+func (c *context) Session() *model.Session {
+	return c.session
+}
+
+func (c *context) RequestID() string {
+	return c.requestID
+}
+
+func (c *context) IPAddress() net.IP {
+	return c.ipAddress
+}
+
+func (c *context) Error(err error) {
 	var httpErr httpError
 
 	switch err.(type) {
@@ -83,20 +133,20 @@ func (c *Context) Error(err error) {
 	c.JSON(httpErr.StatusCode, httpErr.BaseError)
 }
 
-func (c *Context) JSON(statusCode int, body interface{}) {
-	c.ResponseWriter.Header().Set(headerContentType, contentTypeJSON)
+func (c *context) JSON(statusCode int, body interface{}) {
+	c.responseWriter.Header().Set(headerContentType, contentTypeJSON)
 	if body == nil {
-		c.ResponseWriter.WriteHeader(statusCode)
+		c.responseWriter.WriteHeader(statusCode)
 		return
 	}
 
-	if err := json.NewEncoder(c.ResponseWriter).Encode(body); err != nil {
+	if err := json.NewEncoder(c.responseWriter).Encode(body); err != nil {
 		logger.Errorf("Failed to write response: %v", err)
 	}
 }
 
-func (c *Context) BindJSON(i interface{}) error {
-	req := c.Request
+func (c *context) BindJSON(i interface{}) error {
+	req := c.request
 	if err := json.NewDecoder(req.Body).Decode(i); err != nil {
 		if ute, ok := err.(*json.UnmarshalTypeError); ok {
 			return errors.Wrap(err, fmt.Sprintf("Unmarshal type error: expected=%v, got=%v, field=%v, offset=%v", ute.Type, ute.Value, ute.Field, ute.Offset))

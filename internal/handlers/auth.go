@@ -26,7 +26,7 @@ func InitAuthHandler(router *mux.Router, userService service.UserService, tokenS
 	router.Handle("/auth/tokensignin", ApiHandler(authHandler.tokenSignin)).Methods("POST")
 }
 
-func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Request) {
+func (h *AuthHandler) tokenSignin(c Context) {
 	var tokenSigninRequest contracts.TokenSigninRequest
 	if err := c.BindJSON(&tokenSigninRequest); err != nil {
 		c.Error(err)

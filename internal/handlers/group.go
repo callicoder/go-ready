@@ -1,8 +1,6 @@
 package handlers
 
 import (
-	"net/http"
-
 	"github.com/callicoder/go-ready/internal/service"
 	"github.com/gorilla/mux"
 )
@@ -21,14 +19,14 @@ func InitGroupHandler(router *mux.Router, groupService service.GroupService) {
 	router.Handle("/groups/{groupId}", ApiHandler(groupHandler.update)).Methods("PUT")
 }
 
-func (h *GroupHandler) create(c *Context, w http.ResponseWriter, r *http.Request) {
+func (h *GroupHandler) create(c Context) {
 
 }
 
-func (h *GroupHandler) retrieve(c *Context, w http.ResponseWriter, r *http.Request) {
+func (h *GroupHandler) retrieve(c Context) {
 
 }
 
-func (h *GroupHandler) update(c *Context, w http.ResponseWriter, r *http.Request) {
+func (h *GroupHandler) update(c Context) {
 
 }

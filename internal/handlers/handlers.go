@@ -7,7 +7,7 @@ import (
 )
 
 type Handler struct {
-	HandleFunc             func(*Context, http.ResponseWriter, *http.Request)
+	HandleFunc             func(Context)
 	RequiresAuthentication bool
 }
 
@@ -19,17 +19,17 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.HandleFunc(c, w, r)
+	h.HandleFunc(c)
 }
 
-func ApiHandler(h func(*Context, http.ResponseWriter, *http.Request)) http.Handler {
+func ApiHandler(h func(Context)) http.Handler {
 	return &Handler{
 		HandleFunc:             h,
 		RequiresAuthentication: false,
 	}
 }
 
-func ApiAuthenticatedHandler(h func(*Context, http.ResponseWriter, *http.Request)) http.Handler {
+func ApiAuthenticatedHandler(h func(Context)) http.Handler {
 	return &Handler{
 		HandleFunc:             h,
 		RequiresAuthentication: true,
