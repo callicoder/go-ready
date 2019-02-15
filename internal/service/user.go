@@ -6,7 +6,7 @@ import (
 )
 
 type UserService interface {
-	Create(user *model.User) (*model.User, error)
+	Save(user *model.User) (*model.User, error)
 }
 
 type userService struct {
@@ -19,6 +19,6 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 	}
 }
 
-func (s *userService) Create(user *model.User) (*model.User, error) {
+func (s *userService) Save(user *model.User) (*model.User, error) {
 	return nil, nil
 }

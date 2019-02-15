@@ -23,7 +23,7 @@ func NewRouter(config *config.Config, deps *Dependencies) http.Handler {
 	// Attach API Handlers
 	handlers.InitUserHandler(router, deps.UserService)
 	handlers.InitGroupHandler(router, deps.GroupService)
-	handlers.InitAuthHandler(router, deps.UserService, config.Auth)
+	handlers.InitAuthHandler(router, deps.UserService, deps.TokenService, config.Auth)
 
 	// Prepare the Http handler
 	var handler http.Handler = router

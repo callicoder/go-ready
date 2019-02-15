@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/callicoder/go-ready/internal/config"
@@ -13,11 +12,12 @@ import (
 )
 
 type AuthHandler struct {
-	userService service.UserService
-	config      config.AuthConfig
+	userService  service.UserService
+	tokenService service.TokenService
+	config       config.AuthConfig
 }
 
-func InitAuthHandler(router *mux.Router, userService service.UserService, config config.AuthConfig) {
+func InitAuthHandler(router *mux.Router, userService service.UserService, tokenService service.TokenService, config config.AuthConfig) {
 	authHandler := &AuthHandler{
 		userService: userService,
 		config:      config,
@@ -28,7 +28,8 @@ func InitAuthHandler(router *mux.Router, userService service.UserService, config
 
 func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Request) {
 	var tokenSigninRequest contracts.TokenSigninRequest
-	if err := json.NewDecoder(r.Body).Decode(&tokenSigninRequest); err != nil {
+	if err := c.BindJSON(&tokenSigninRequest); err != nil {
+		c.Error(err)
 		return
 	}
 
@@ -37,10 +38,13 @@ func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Req
 		h.config.GoogleClientId,
 	})
 	if err != nil {
+		c.Error(err)
 		return
 	}
+
 	claimSet, err := googleAuthIDTokenVerifier.Decode(tokenSigninRequest.IdToken)
 	if err != nil {
+		c.Error(err)
 		return
 	}
 
@@ -50,6 +54,18 @@ func (h *AuthHandler) tokenSignin(c *Context, w http.ResponseWriter, r *http.Req
 		ImageUrl: claimSet.Picture,
 	}
 
-	h.userService.Create(user)
-	return
+	h.userService.Save(user)
+
+	authToken, err := h.tokenService.CreateToken(user)
+
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	authResponse := contracts.AuthResponse{
+		AuthToken: authToken,
+		TokenType: "Bearer",
+	}
+	c.JSON(http.StatusOK, authResponse)
 }
