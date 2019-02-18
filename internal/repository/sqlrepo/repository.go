@@ -12,7 +12,7 @@ type SqlRepository struct {
 }
 
 func New(dbConfig config.DatabaseConfig) (*SqlRepository, error) {
-	db, err := gorm.Open(dbConfig.DriverName, dbConfig.URL)
+	db, err := gorm.Open(dbConfig.Driver, dbConfig.URL())
 	if err != nil {
 		return nil, err
 	}

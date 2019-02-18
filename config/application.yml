@@ -10,8 +10,12 @@ Grpc:
 Logging:
   Level: debug
 Database:
-  DriverName: mysql
-  URL: mysql://root:callicoder@/test?charset=utf8   
+  Driver: mysql
+  Name: chitchat
+  Host: localhost
+  Port: 3306
+  Username: root
+  Password: callicoder 
 Migration:
   Path: file://db/migrations    
 Auth:

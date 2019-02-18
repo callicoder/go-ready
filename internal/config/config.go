@@ -1,7 +1,9 @@
 package config
 
 import (
+	"bytes"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -36,8 +38,44 @@ type LoggingConfig struct {
 }
 
 type DatabaseConfig struct {
-	DriverName string
-	URL        string
+	Driver   string
+	Name     string
+	Host     string
+	Port     int
+	Username string
+	Password string
+}
+
+func (cfg DatabaseConfig) URL() string {
+	var buf bytes.Buffer
+
+	// [username[:password]@]
+	if len(cfg.Username) > 0 {
+		buf.WriteString(cfg.Username)
+		if len(cfg.Password) > 0 {
+			buf.WriteByte(':')
+			buf.WriteString(cfg.Password)
+		}
+		buf.WriteByte('@')
+	}
+
+	// [protocol[(address)]]
+	if len(cfg.Host) > 0 {
+		buf.WriteString("tcp")
+		buf.WriteByte('(')
+		buf.WriteString(cfg.Host)
+		if cfg.Port > 0 {
+			buf.WriteByte(':')
+			buf.WriteString(strconv.Itoa(cfg.Port))
+		}
+		buf.WriteByte(')')
+	}
+
+	// /dbname
+	buf.WriteByte('/')
+	buf.WriteString(cfg.Name)
+
+	return buf.String()
 }
 
 type MigrationConfig struct {

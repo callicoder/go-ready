@@ -93,5 +93,5 @@ func rollbackMigration(config *config.Config) error {
 }
 
 func newMigrate(config *config.Config) (*migrate.Migrate, error) {
-	return migrate.New(config.Migration.Path, config.Database.URL)
+	return migrate.New(config.Migration.Path, config.Database.Driver+"://"+config.Database.URL())
 }

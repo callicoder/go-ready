@@ -14,7 +14,7 @@ type Handler struct {
 func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c := NewContext(w, r)
 
-	if h.RequiresAuthentication && c.Session == nil {
+	if h.RequiresAuthentication && c.Session() == nil {
 		c.Error(errors.NewUnauthorizedError(errors.New("Sorry, You're not authorized to access this resource")))
 		return
 	}

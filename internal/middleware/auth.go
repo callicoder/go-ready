@@ -14,7 +14,6 @@ func AuthHandler(next http.Handler, tokenService service.TokenService) http.Hand
 		token := getAuthTokenFromRequest(r)
 		if token != "" {
 			session, err := tokenService.GetUserSessionFromToken(token)
-			logger.Info(session)
 			if err != nil {
 				logger.Infof("Could not get user from token %s", err.Error())
 			} else {
