@@ -12,13 +12,13 @@ type Repository interface {
 }
 
 type UserRepository interface {
-	Save(user *model.User) error
-	FindById(id int) (*model.User, error)
-	DeleteById(id int) error
+	Save(user *model.User) (*model.User, error)
+	FindById(id uint64) (*model.User, error)
+	DeleteById(id uint64) error
 }
 
 type GroupRepository interface {
-	Save(group *model.Group) error
-	FindById(id int) (*model.Group, error)
-	DeleteById(id int) error
+	Save(group *model.Group) (*model.Group, error)
+	FindById(id uint64) (*model.Group, error)
+	DeleteById(id uint64) error
 }

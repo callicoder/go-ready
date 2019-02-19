@@ -28,7 +28,7 @@ func NewTokenService(config config.AuthConfig) TokenService {
 
 func (s *tokenService) CreateToken(user *model.User) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.StandardClaims{
-		Subject:   string(user.Id),
+		Subject:   strconv.FormatUint(user.Id, 10),
 		IssuedAt:  time.Now().Unix(),
 		ExpiresAt: time.Now().Add(time.Duration(s.config.JwtExpiryInSec) * time.Second).Unix(),
 	})
@@ -61,10 +61,10 @@ func (s *tokenService) GetUserSessionFromToken(tokenStr string) (*model.Session,
 	}
 
 	if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
-		userId, _ := strconv.ParseInt(claims.Subject, 10, 64)
+		userId, _ := strconv.ParseUint(claims.Subject, 10, 64)
 
 		session := &model.Session{
-			UserId: int(userId),
+			UserId: uint64(userId),
 		}
 
 		return session, nil

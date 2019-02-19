@@ -10,11 +10,15 @@ func NewSqlGroupRepository(sqlRepository *SqlRepository) *SqlGroupRepository {
 	return &SqlGroupRepository{sqlRepository}
 }
 
-func (s *SqlGroupRepository) Save(group *model.Group) error {
-	return s.DB().Save(group).Error
+func (s *SqlGroupRepository) Save(group *model.Group) (*model.Group, error) {
+	if err := s.DB().Save(group).Error; err != nil {
+		return nil, err
+	}
+	return group, nil
+
 }
 
-func (s *SqlGroupRepository) FindById(id int) (*model.Group, error) {
+func (s *SqlGroupRepository) FindById(id uint64) (*model.Group, error) {
 	var group model.Group
 	dbResult := s.DB().First(&group, id)
 	if err := dbResult.Error; err != nil {
@@ -23,6 +27,6 @@ func (s *SqlGroupRepository) FindById(id int) (*model.Group, error) {
 	return &group, nil
 }
 
-func (s *SqlGroupRepository) DeleteById(id int) error {
+func (s *SqlGroupRepository) DeleteById(id uint64) error {
 	return s.DB().Delete(&model.Group{Id: id}).Error
 }

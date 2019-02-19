@@ -20,5 +20,5 @@ func NewUserService(userRepository repository.UserRepository) UserService {
 }
 
 func (s *userService) Save(user *model.User) (*model.User, error) {
-	return nil, nil
+	return s.userRepository.Save(user)
 }

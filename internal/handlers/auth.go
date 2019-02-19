@@ -49,9 +49,10 @@ func (h *AuthHandler) tokenSignin(c Context) {
 	}
 
 	user := &model.User{
-		Name:     claimSet.Name,
-		Email:    claimSet.Email,
-		ImageUrl: claimSet.Picture,
+		FirstName: claimSet.GivenName,
+		LastName:  claimSet.FamilyName,
+		Email:     claimSet.Email,
+		ImageUrl:  claimSet.Picture,
 	}
 
 	h.userService.Save(user)
@@ -66,6 +67,12 @@ func (h *AuthHandler) tokenSignin(c Context) {
 	authResponse := contracts.AuthResponse{
 		AuthToken: authToken,
 		TokenType: "Bearer",
+		User: contracts.UserProfile{
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Email:     user.Email,
+			ImageUrl:  user.ImageUrl,
+		},
 	}
 	c.JSON(http.StatusOK, authResponse)
 }
